@@ -1,0 +1,30 @@
+[project]
+name = "claude-agents-experiment"
+version = "0.1.0"
+description = "Mini project: Claude agents with experimental patterns"
+authors = [{name = "Piotr Kroczak", email = "your-email@example.com"}]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.4.0",
+    "mypy>=1.5.0",
+    "ruff>=0.1.0",
+    "black>=23.9.0",
+]
+
+dependencies = [
+    "anthropic>=0.25.0",        # Claude SDK - latest
+    "python-dotenv>=1.0.0",     # Pour .env
+    "pydantic>=2.5.0",          # Validation (recommandé pour agents)
+]
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
