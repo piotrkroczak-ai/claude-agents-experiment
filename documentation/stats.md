@@ -28,12 +28,8 @@
 | Lines deleted | 0 |
 | Languages | Python, Markdown, TOML |
 
-**Files created (Phase 1):**
-`src/agents.py`, `src/tools.py`, `src/config.py`, `src/token_optimization.py`,
-`src/teammate.py`, `src/doc_agent.py`, `examples/demo.py`, `examples/teammate_demo.py`,
-`tests/test_agent.py`, `documentation/logs.md`, `documentation/tech_choix.md`,
-`documentation/bugs.md`, `documentation/current_state.md`, `documentation/PLAN.md`,
-`pyproject.toml`, `.gitignore`, `.env.example`, `README.md`, `SETUP.md`
+**Files created (Phase 1):** 19
+`src/agents.py`, `src/tools.py`, `src/config.py`, `src/token_optimization.py`, `src/teammate.py` [...]
 
 ### Quality
 
@@ -115,17 +111,11 @@
 | Lines deleted | 71 |
 | Net lines added | 2,894 |
 
-**New files (Phase 2):**
-`src/token_optimization.py`, `src/teammate.py`, `src/doc_agent.py`,
-`examples/teammate_demo.py`, `examples/usage_report.py`,
-`tests/test_doc_agent.py`, `tests/test_token_optimization.py`, `tests/tests.md`,
-`conftest.py`, `uv.lock`,
-`documentation/PLAN.md`, `documentation/bugs.md`, `documentation/current_state.md`,
-`documentation/logs.md`, `documentation/tech_choix.md`
+**New files (Phase 2):** 15
+`src/token_optimization.py`, `src/teammate.py`, `src/doc_agent.py`, `examples/usage_report.py`, `tests/test_doc_agent.py` [...]
 
-**Modified files:**
-`.env.example`, `.gitignore`, `README.md`, `pyproject.toml`,
-`src/agents.py`, `src/config.py`, `src/tools.py`, `tests/test_agent.py`
+**Modified files:** 8
+`.gitignore`, `README.md`, `pyproject.toml`, `src/tools.py`, `src/agents.py` [...]
 
 ### Quality
 
