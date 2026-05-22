@@ -192,11 +192,83 @@
 
 ---
 
-## Phases 3–5 — Planned
+## Phase 3 — Robustness
+
+**Goal:** Structured outputs (replace fragile string parsing), async parallel worker dispatch, consistent error handling.
+
+### Timeline
+
+| Metric | Value |
+|---|---|
+| Start date | 2026-05-22 |
+| Completion date | 2026-05-22 |
+| Duration | ~1 h |
+| Git commit | pending |
+
+### Codebase
+
+| Metric | Value |
+|---|---|
+| Files changed | 4 |
+| New files created | 2 |
+| Existing files modified | 2 |
+
+**New files (Phase 3):** 2
+`tests/test_phase3.py`, `examples/async_demo.py`
+
+**Modified files:** 2
+`src/teammate.py`, `examples/async_demo.py`
+
+### Quality
+
+| Metric | Value |
+|---|---|
+| Bugs found | 2 |
+| Bugs fixed in phase | 2 |
+| Bugs deferred | 0 |
+| Regressions introduced | 0 |
+
+**Bugs fixed:**
+- Wrong `output_config.format` key (`"json_schema"` instead of `"schema"`) — caught by live tests
+- API requires `additionalProperties: false` on all object nodes in JSON schema — fixed with explicit `_PLAN_SCHEMA`
+
+### Tests
+
+| Metric | Value |
+|---|---|
+| Tests created this phase | 9 |
+| Total tests in project | 25 |
+| Unit tests | 17 |
+| Live tests | 8 |
+| Unit pass rate | **17/17 — 100%** |
+| Live pass rate | **8/8 — 100%** (all live tests run with API credits) |
+| Test files | 4 (`test_agent.py`, `test_token_optimization.py`, `test_doc_agent.py`, `test_phase3.py`) |
+
+### API Usage (Phase 3 test run)
+
+| Metric | Value |
+|---|---|
+| Live tests run | 3 (Phase 3) + 5 (prior phases) |
+| Parallel speedup observed | ~1.04x (0.44s saved on 2-worker task) |
+| Workers model | Haiku 4.5 |
+| Orchestrator model | Sonnet 4.6 |
+
+### Key Achievements
+
+- `OrchestratorPlan` / `WorkerTask` Pydantic models replace fragile `ROLE:/TASK:` string parsing
+- `_plan()` uses `output_config.format` JSON schema — guaranteed structured output, no regex
+- `ask_async()` + `run_async()` dispatch workers in parallel via `asyncio.gather()`
+- `AsyncAnthropic` client lazy-initialised per agent — zero cost if async path unused
+- `max_retries=2` on every SDK client — SDK auto-retries 429 and 5xx
+- `try/except RateLimitError, APIStatusError, APIConnectionError` in every API call
+- `examples/async_demo.py` shows sync vs async timing side-by-side
+
+---
+
+## Phases 4–5 — Planned
 
 | Phase | Status | Key goal |
 |---|---|---|
-| Phase 3 — Robustness | 🔲 Next | Structured outputs (replace ROLE:/TASK: parsing), async parallel workers |
 | Phase 4 — Production Patterns | 🔲 Planned | Batch API demo, file-based memory, token usage logging (partially done) |
 | Phase 5 — Multi-Agent Coordination | 🔲 Future | Specialist registry, agent-to-agent protocol, evaluation framework |
 

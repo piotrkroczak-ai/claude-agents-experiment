@@ -158,7 +158,7 @@ class DocumentationAgent:
     """
 
     def __init__(self):
-        self.client = Anthropic()
+        self.client = Anthropic(max_retries=2)
 
     # ------------------------------------------------------------------
     # Low-level helpers — no API call

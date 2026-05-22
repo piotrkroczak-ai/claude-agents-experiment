@@ -9,7 +9,7 @@ class SimpleAgent:
     """Agent basique avec outils."""
 
     def __init__(self):
-        self.client = Anthropic()
+        self.client = Anthropic(max_retries=2)
         self.messages = []
 
     def run(self, user_input: str) -> str:
