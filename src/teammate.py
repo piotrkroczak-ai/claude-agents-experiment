@@ -10,6 +10,8 @@ from __future__ import annotations
 import asyncio
 import uuid
 
+from src.memory import load_session, save_session
+
 from anthropic import (
     Anthropic,
     AsyncAnthropic,
@@ -149,7 +151,7 @@ class Orchestrator:
       7. Async parallel worker dispatch via run_async() (Phase 3.2)
     """
 
-    def __init__(self, teammates: list[TeammateAgent]):
+    def __init__(self, teammates: list[TeammateAgent], memory_key: str | None = None):
         self.client = Anthropic(max_retries=2)
         self.teammates = {t.role: t for t in teammates}
         self._system = cached_system(
@@ -157,6 +159,8 @@ class Orchestrator:
             "and synthesise their outputs into a final concise answer. "
             "Be direct — your token budget is limited."
         )
+        self._memory_key = memory_key
+        self._prior_context: dict = load_session(memory_key) if memory_key else {}
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -236,7 +240,10 @@ class Orchestrator:
         if not results:
             return str(plan.model_dump())
 
-        return self._synthesise(task, results, run_id)
+        answer = self._synthesise(task, results, run_id)
+        if self._memory_key:
+            save_session(self._memory_key, {"last_task": task, "result": answer})
+        return answer
 
     # ------------------------------------------------------------------
     # Public API — asynchronous (Phase 3.2)
@@ -261,7 +268,10 @@ class Orchestrator:
         if not results:
             return str(plan.model_dump())
 
-        return self._synthesise(task, results, run_id)
+        answer = self._synthesise(task, results, run_id)
+        if self._memory_key:
+            save_session(self._memory_key, {"last_task": task, "result": answer})
+        return answer
 
     # ------------------------------------------------------------------
     # Utility

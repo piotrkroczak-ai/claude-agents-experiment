@@ -28,6 +28,7 @@ __pycache__/
 # Generated files
 documentation/token_report.html
 .pytest_tmp/
+memory/sessions.json
 
 # OS
 .DS_Store

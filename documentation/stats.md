@@ -265,11 +265,68 @@
 
 ---
 
-## Phases 4–5 — Planned
+## Phase 4 — Production Patterns
 
-| Phase | Status | Key goal |
-|---|---|---|
-| Phase 4 — Production Patterns | 🔲 Planned | Batch API demo, file-based memory, token usage logging (partially done) |
-| Phase 5 — Multi-Agent Coordination | 🔲 Future | Specialist registry, agent-to-agent protocol, evaluation framework |
+**Goal:** Batch API for cost savings on bulk work, file-based session memory, observability (token tracking already done in Phase 2).
 
-*Stats rows for these phases will be added upon completion.*
+### Timeline
+
+| Metric | Value |
+|---|---|
+| Start date | 2026-05-22 |
+| Completion date | 2026-05-22 |
+| Duration | ~45 min |
+| Git commit | pending |
+
+### Codebase
+
+| Metric | Value |
+|---|---|
+| Files changed | 5 |
+| New files created | 3 |
+| Existing files modified | 2 |
+
+**New files (Phase 4):** 3
+`src/memory.py`, `examples/batch_demo.py`, `tests/test_phase4.py`
+
+**Modified files:** 2
+`src/teammate.py`, `.gitignore`
+
+### Quality
+
+| Metric | Value |
+|---|---|
+| Bugs found | 1 |
+| Bugs fixed in phase | 1 |
+| Bugs deferred | 0 |
+
+**Bugs fixed:**
+- Batch test asserted `ended` status within 2 minutes — Batch API can take up to 24h. Fixed: test now asserts creation only; `batch_demo.py` handles full polling.
+
+### Tests
+
+| Metric | Value |
+|---|---|
+| Tests created this phase | 10 |
+| Total tests in project | 35 |
+| Unit tests | 25 |
+| Live tests | 10 |
+| Unit pass rate | **25/25 — 100%** |
+| Live pass rate | **10/10 — 100%** |
+| Test files | 5 |
+
+### Key Achievements
+
+- `src/memory.py` — `save_session()` / `load_session()` / `delete_session()` backed by `memory/sessions.json`
+- `Orchestrator(memory_key=...)` — loads prior context on init, saves task+result after every `run()`
+- `examples/batch_demo.py` — submits 5 questions as one batch, polls to completion, prints sync-vs-batch cost comparison (50% savings)
+- `memory/sessions.json` added to `.gitignore`
+- 4.3 Observability: already complete since Phase 2 (`log_usage()` in `src/token_optimization.py`)
+
+---
+
+## Phase 5 — Multi-Agent Coordination 🔲 Future
+
+**Goal:** Specialist agent registry, agent-to-agent communication, evaluation framework.
+
+*Stats rows will be added upon completion.*
