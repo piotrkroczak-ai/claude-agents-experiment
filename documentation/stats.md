@@ -325,8 +325,56 @@
 
 ---
 
-## Phase 5 — Multi-Agent Coordination 🔲 Future
+## Phase 5 — Multi-Agent Coordination
 
-**Goal:** Specialist agent registry, agent-to-agent communication, evaluation framework.
+**Goal:** Specialist agent registry, sequential agent pipeline, evaluation framework.
 
-*Stats rows will be added upon completion.*
+### Timeline
+
+| Metric | Value |
+|---|---|
+| Start date | 2026-05-22 |
+| Completion date | 2026-05-22 |
+| Duration | ~30 min |
+| Git commit | pending |
+
+### Codebase
+
+| Metric | Value |
+|---|---|
+| New files created | 3 |
+| Existing files modified | 0 |
+
+**New files (Phase 5):** 3
+`src/registry.py`, `examples/eval_demo.py`, `tests/test_phase5.py`
+
+### Tests
+
+| Metric | Value |
+|---|---|
+| Tests created this phase | 11 |
+| Total tests in project | 46 |
+| Unit tests | 33 |
+| Live tests | 13 |
+| Unit pass rate | **33/33 — 100%** |
+| Live pass rate | **13/13 — 100%** |
+| Test files | 6 |
+
+### Key Achievements
+
+- `SpecialistRegistry` — 4 pre-configured roles (researcher, coder, reviewer, writer); `get()`, `subset()`, `all()` API
+- `AgentPipeline` — chains agents where each stage receives prior output as context; `run()` returns all stage outputs, `final()` returns last stage only
+- `examples/eval_demo.py` — runs same task through 3 approaches (single, orchestrator, pipeline) and prints timing + length comparison
+- All prior phases remain backward-compatible — registry wraps existing `TeammateAgent`, pipeline uses the same `ask()` interface
+
+---
+
+## Project Complete — All 5 Phases Done
+
+| Phase | Status | Key output |
+|---|---|---|
+| 1 — Foundation | ✅ | `SimpleAgent`, `TeammateAgent`, `Orchestrator`, `DocumentationAgent` |
+| 2 — Real Tools & Tests | ✅ | Real tools, token tracking dashboard, 16 tests |
+| 3 — Robustness | ✅ | Structured outputs, async parallel dispatch, error handling |
+| 4 — Production Patterns | ✅ | Batch API, file-based memory, observability |
+| 5 — Multi-Agent Coordination | ✅ | Specialist registry, pipeline, evaluation framework |
