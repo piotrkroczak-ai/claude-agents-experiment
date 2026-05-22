@@ -1,16 +1,17 @@
-"""Tests de base."""
-from src.agent import SimpleAgent
+"""Tests for src/agents.py"""
+import pytest
+from src.agents import SimpleAgent
 
 
 def test_agent_init():
-    """L'agent s'initialise correctement."""
     agent = SimpleAgent()
     assert agent.client is not None
+    assert agent.messages == []
 
 
+@pytest.mark.live
 def test_agent_run():
-    """L'agent exécute sans erreur."""
     agent = SimpleAgent()
-    response = agent.run("Test simple")
+    response = agent.run("Say hello in one word.")
     assert isinstance(response, str)
     assert len(response) > 0

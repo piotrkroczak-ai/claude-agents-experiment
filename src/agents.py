@@ -2,7 +2,7 @@
 import json
 from anthropic import Anthropic
 from src.config import MODEL, MAX_TOKENS
-from src.tools import fetch_sample_data, process_data, TOOLS_DEFINITIONS
+from src.tools import fetch_sample_data, process_data, count_words, read_file, TOOLS_DEFINITIONS
 
 
 class SimpleAgent:
@@ -57,7 +57,10 @@ class SimpleAgent:
             self.messages.append({"role": "user", "content": tool_results})
 
     def _execute_tool(self, tool_name: str, tool_input: dict) -> str:
-        """Exécute un outil."""
         if tool_name == "fetch_sample_data":
             return fetch_sample_data(tool_input["query"])
-        return "Outil inconnu"
+        if tool_name == "count_words":
+            return count_words(tool_input["text"])
+        if tool_name == "read_file":
+            return read_file(tool_input["path"])
+        return f"Unknown tool: {tool_name}"
