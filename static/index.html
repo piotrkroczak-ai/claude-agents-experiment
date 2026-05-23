@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,17 +8,48 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ── Dark theme (default) ─────────────────────────────────── */
   :root {
-    --bg:      #0d1117;
-    --surface: #161b22;
-    --border:  #30363d;
-    --text:    #e6edf3;
-    --muted:   #8b949e;
-    --accent:  #58a6ff;
-    --green:   #3fb950;
-    --orange:  #d29922;
-    --purple:  #a371f7;
-    --red:     #f85149;
+    --bg:         #0d1117;
+    --surface:    #161b22;
+    --surface2:   #1c2228;
+    --border:     #30363d;
+    --text:       #e6edf3;
+    --muted:      #8b949e;
+    --accent:     #58a6ff;
+    --green:      #3fb950;
+    --orange:     #d29922;
+    --purple:     #a371f7;
+    --red:        #f85149;
+    --active-bg:  #1c2d42;
+    --active-bdr: #58a6ff;
+    --tag-orch:   #1a2d4a;
+    --tag-work:   #1a3025;
+    --tag-haiku:  #2a1f3d;
+    --error-bg:   #2d1117;
+    --btn-color:  #0d1117;
+  }
+
+  /* ── Light theme ──────────────────────────────────────────── */
+  [data-theme="light"] {
+    --bg:         #ffffff;
+    --surface:    #f6f8fa;
+    --surface2:   #eaeef2;
+    --border:     #d0d7de;
+    --text:       #1f2328;
+    --muted:      #57606a;
+    --accent:     #0969da;
+    --green:      #1a7f37;
+    --orange:     #9a6700;
+    --purple:     #8250df;
+    --red:        #cf222e;
+    --active-bg:  #dbeafe;
+    --active-bdr: #0969da;
+    --tag-orch:   #dbeafe;
+    --tag-work:   #dcfce7;
+    --tag-haiku:  #ede9fe;
+    --error-bg:   #fef2f2;
+    --btn-color:  #ffffff;
   }
 
   body {
@@ -28,51 +59,96 @@
     font-size: 15px;
     line-height: 1.6;
     min-height: 100vh;
+    transition: background .2s, color .2s;
   }
 
+  /* ── Header ───────────────────────────────────────────────── */
   header {
     border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
+    padding: 14px 24px;
     display: flex;
     align-items: center;
     gap: 12px;
   }
-  header h1 { font-size: 18px; font-weight: 600; }
-  header span { color: var(--muted); font-size: 13px; }
+  header h1 { font-size: 17px; font-weight: 700; flex: 1; }
+  header .subtitle { color: var(--muted); font-size: 13px; }
 
+  #theme-toggle {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 5px 9px;
+    transition: background .15s;
+    color: var(--text);
+  }
+  #theme-toggle:hover { background: var(--surface2); }
+
+  /* ── Main layout ──────────────────────────────────────────── */
   main {
-    max-width: 860px;
+    max-width: 880px;
     margin: 0 auto;
-    padding: 32px 24px;
+    padding: 28px 24px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 22px;
   }
 
-  /* ---- approach selector ---- */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* ── Approach cards ───────────────────────────────────────── */
   .approaches {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
+
   .approach-btn {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
     cursor: pointer;
+    padding: 14px 12px;
     text-align: left;
-    transition: border-color .15s, background .15s;
+    transition: border-color .15s, background .15s, box-shadow .15s;
   }
-  .approach-btn:hover { border-color: var(--accent); }
-  .approach-btn.active {
+  .approach-btn:hover {
     border-color: var(--accent);
-    background: #1c2433;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
   }
-  .approach-btn .label { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
-  .approach-btn .desc  { color: var(--muted); font-size: 12px; }
+  .approach-btn.active {
+    background: var(--active-bg);
+    border-color: var(--active-bdr);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .approach-btn .icon {
+    font-size: 20px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .approach-btn .label {
+    color: var(--text);
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .approach-btn .desc {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.4;
+  }
 
-  /* ---- task input ---- */
+  /* ── Task input ───────────────────────────────────────────── */
   .input-group { display: flex; flex-direction: column; gap: 8px; }
   label { font-size: 13px; color: var(--muted); }
   textarea {
@@ -82,88 +158,102 @@
     color: var(--text);
     font-family: inherit;
     font-size: 14px;
+    outline: none;
     padding: 12px;
     resize: vertical;
     min-height: 80px;
     width: 100%;
-    outline: none;
     transition: border-color .15s;
   }
   textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); }
 
-  /* ---- run button ---- */
-  .run-row { display: flex; align-items: center; gap: 16px; }
-  button#run-btn {
+  /* ── Run button ───────────────────────────────────────────── */
+  .run-row { display: flex; align-items: center; gap: 14px; }
+  #run-btn {
     background: var(--accent);
     border: none;
     border-radius: 6px;
-    color: #0d1117;
+    color: var(--btn-color);
     cursor: pointer;
     font-size: 14px;
-    font-weight: 600;
-    padding: 10px 28px;
+    font-weight: 700;
+    padding: 10px 30px;
     transition: opacity .15s;
   }
-  button#run-btn:disabled { opacity: .45; cursor: not-allowed; }
+  #run-btn:disabled { opacity: .4; cursor: not-allowed; }
+
   .spinner {
-    display: none;
-    width: 18px; height: 18px;
     border: 2px solid var(--border);
     border-top-color: var(--accent);
     border-radius: 50%;
+    display: none;
+    height: 18px; width: 18px;
     animation: spin .7s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+  #status-text { color: var(--muted); font-size: 13px; }
 
-  /* ---- result card ---- */
+  /* ── Error ────────────────────────────────────────────────── */
+  #error-msg {
+    background: var(--error-bg);
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    color: var(--red);
+    display: none;
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+
+  /* ── Result card ──────────────────────────────────────────── */
   #result-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 10px;
     display: none;
+    padding: 20px;
   }
   .result-header {
+    align-items: center;
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
   }
-  .result-header .badge {
-    background: #1c2433;
-    border: 1px solid var(--accent);
+  .badge {
+    background: var(--active-bg);
+    border: 1px solid var(--active-bdr);
     border-radius: 4px;
     color: var(--accent);
     font-size: 12px;
-    padding: 2px 8px;
+    font-weight: 600;
+    padding: 2px 10px;
   }
-  .stats { display: flex; gap: 20px; font-size: 13px; color: var(--muted); }
-  .stats span b { color: var(--text); }
-  #result-body { line-height: 1.7; }
+  .result-meta { color: var(--muted); font-size: 13px; }
+  .result-meta b { color: var(--text); }
 
-  /* markdown output styles */
-  #result-body h1, #result-body h2, #result-body h3 {
-    margin: 16px 0 8px; color: var(--text);
-  }
-  #result-body p  { margin-bottom: 12px; }
-  #result-body ul, #result-body ol { margin: 8px 0 12px 20px; }
-  #result-body li { margin-bottom: 4px; }
+  /* Markdown output */
+  #result-body { line-height: 1.75; }
+  #result-body h1,#result-body h2,#result-body h3 { color: var(--text); margin: 16px 0 8px; }
+  #result-body p   { margin-bottom: 12px; }
+  #result-body ul,
+  #result-body ol  { margin: 8px 0 12px 20px; }
+  #result-body li  { margin-bottom: 4px; }
   #result-body code {
-    background: var(--bg);
+    background: var(--surface2);
     border-radius: 4px;
     font-family: "SFMono-Regular", Consolas, monospace;
     font-size: 13px;
     padding: 2px 6px;
   }
   #result-body pre {
-    background: var(--bg);
+    background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 6px;
+    margin: 12px 0;
     overflow-x: auto;
     padding: 16px;
-    margin: 12px 0;
   }
   #result-body pre code { background: none; padding: 0; }
   #result-body blockquote {
@@ -174,95 +264,136 @@
   }
   #result-body strong { color: var(--text); }
 
-  /* ---- usage table ---- */
-  .section-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: 10px;
+  /* ── Stats board ──────────────────────────────────────────── */
+  .stats-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
   }
-  .usage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .usage-table th {
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat-card .stat-label {
     color: var(--muted);
-    font-weight: 500;
-    padding: 6px 10px;
-    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .stat-card .stat-value {
+    color: var(--text);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stat-card .stat-sub {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  /* Model breakdown bar */
+  .model-bar {
+    background: var(--border);
+    border-radius: 4px;
+    height: 6px;
+    margin-top: 8px;
+    overflow: hidden;
+    width: 100%;
+  }
+  .model-bar-fill {
+    background: var(--purple);
+    height: 100%;
+    transition: width .4s ease;
+  }
+
+  /* ── Usage table ──────────────────────────────────────────── */
+  .usage-table {
+    border-collapse: collapse;
+    font-size: 13px;
+    width: 100%;
+  }
+  .usage-table th {
     border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-weight: 600;
+    padding: 7px 10px;
+    text-align: left;
   }
   .usage-table td {
+    border-bottom: 1px solid var(--surface2);
     padding: 7px 10px;
-    border-bottom: 1px solid #1c2228;
   }
-  .usage-table tr:hover td { background: #161b22; }
-  .tag {
-    border-radius: 3px;
-    font-size: 11px;
-    padding: 1px 6px;
-  }
-  .tag.orch  { background: #1a2d4a; color: var(--accent); }
-  .tag.work  { background: #1a3025; color: var(--green); }
-  .tag.haiku { background: #2a1f3d; color: var(--purple); }
-  .tag.sonnet{ background: #1a2d4a; color: var(--accent); }
+  .usage-table tr:hover td { background: var(--surface2); }
 
-  #error-msg {
-    background: #2d1117;
-    border: 1px solid var(--red);
-    border-radius: 8px;
-    color: var(--red);
-    display: none;
-    font-size: 13px;
-    padding: 12px 16px;
+  .tag {
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
   }
+  .tag.orch   { background: var(--tag-orch);  color: var(--accent); }
+  .tag.work   { background: var(--tag-work);  color: var(--green);  }
+  .tag.haiku  { background: var(--tag-haiku); color: var(--purple); }
+  .tag.sonnet { background: var(--tag-orch);  color: var(--accent); }
 </style>
 </head>
 <body>
 
 <header>
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2">
-    <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
   </svg>
   <h1>Claude Agents</h1>
-  <span>multi-agent experiment</span>
+  <span class="subtitle">multi-agent experiment</span>
+  <button id="theme-toggle" title="Toggle light / dark mode">☀️</button>
 </header>
 
 <main>
 
-  <!-- Approach -->
+  <!-- Approach selector -->
   <div>
     <div class="section-title">Approach</div>
     <div class="approaches">
       <button class="approach-btn" data-value="single">
-        <div class="label">Single agent</div>
-        <div class="desc">Researcher answers directly. Fastest &amp; cheapest.</div>
+        <span class="icon">⚡</span>
+        <span class="label">Single agent</span>
+        <span class="desc">Researcher answers directly. Fastest &amp; cheapest.</span>
       </button>
       <button class="approach-btn active" data-value="orchestrator">
-        <div class="label">Orchestrator</div>
-        <div class="desc">Plans, dispatches workers, synthesises. Structured output.</div>
+        <span class="icon">🎯</span>
+        <span class="label">Orchestrator</span>
+        <span class="desc">Plans subtasks, dispatches workers, synthesises results.</span>
       </button>
       <button class="approach-btn" data-value="async">
-        <div class="label">Async parallel</div>
-        <div class="desc">Same as orchestrator but workers run concurrently.</div>
+        <span class="icon">⚙️</span>
+        <span class="label">Async parallel</span>
+        <span class="desc">Workers run concurrently via asyncio — lower latency.</span>
       </button>
       <button class="approach-btn" data-value="pipeline">
-        <div class="label">Pipeline</div>
-        <div class="desc">Researcher → Writer sequential refinement chain.</div>
+        <span class="icon">🔗</span>
+        <span class="label">Pipeline</span>
+        <span class="desc">Researcher → Writer sequential refinement chain.</span>
       </button>
     </div>
   </div>
 
   <!-- Task input -->
   <div class="input-group">
-    <label for="task">Task</label>
-    <textarea id="task" placeholder="Ask anything — e.g. 'Explain Python's GIL and its impact on threading'" rows="3"></textarea>
+    <label for="task">Task <span style="font-size:11px">(Ctrl+Enter to run)</span></label>
+    <textarea id="task" placeholder="e.g. Explain Python's GIL and its impact on multi-threaded code" rows="3"></textarea>
   </div>
 
   <!-- Run -->
   <div class="run-row">
     <button id="run-btn">Run</button>
     <div class="spinner" id="spinner"></div>
-    <span id="status-text" style="color: var(--muted); font-size: 13px;"></span>
+    <span id="status-text"></span>
   </div>
 
   <div id="error-msg"></div>
@@ -271,15 +402,41 @@
   <div id="result-card">
     <div class="result-header">
       <span class="badge" id="result-badge">orchestrator</span>
-      <div class="stats">
-        <span><b id="stat-time">—</b> s</span>
-      </div>
+      <span class="result-meta">Completed in <b id="stat-time">—</b> s</span>
     </div>
     <div id="result-body"></div>
   </div>
 
-  <!-- Recent usage -->
+  <!-- Stats board + usage table (shown once data exists) -->
   <div id="usage-section" style="display:none">
+
+    <div class="section-title">Usage summary</div>
+    <div class="stats-board" style="margin-bottom:22px">
+      <div class="stat-card">
+        <div class="stat-label">Total cost</div>
+        <div class="stat-value" id="stat-cost">$0.00</div>
+        <div class="stat-sub" id="stat-calls">0 API calls</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tokens in</div>
+        <div class="stat-value" id="stat-in">0</div>
+        <div class="stat-sub">input tokens</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Tokens out</div>
+        <div class="stat-value" id="stat-out">0</div>
+        <div class="stat-sub">output tokens</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Model split</div>
+        <div class="stat-value" id="stat-haiku-pct">—</div>
+        <div class="stat-sub" id="stat-model-label">Haiku vs Sonnet</div>
+        <div class="model-bar">
+          <div class="model-bar-fill" id="model-bar-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="section-title">Recent API calls</div>
     <table class="usage-table">
       <thead>
@@ -288,9 +445,9 @@
           <th>Agent</th>
           <th>Call</th>
           <th>Model</th>
-          <th>In</th>
-          <th>Out</th>
-          <th>Cost</th>
+          <th style="text-align:right">In</th>
+          <th style="text-align:right">Out</th>
+          <th style="text-align:right">Cost</th>
         </tr>
       </thead>
       <tbody id="usage-tbody"></tbody>
@@ -300,7 +457,21 @@
 </main>
 
 <script>
-  // --- approach selector ---
+  // ── Theme toggle ───────────────────────────────────────────
+  const html = document.documentElement;
+  const themeBtn = document.getElementById("theme-toggle");
+  const saved = localStorage.getItem("theme") || "dark";
+  html.dataset.theme = saved;
+  themeBtn.textContent = saved === "dark" ? "☀️" : "🌙";
+
+  themeBtn.addEventListener("click", () => {
+    const next = html.dataset.theme === "dark" ? "light" : "dark";
+    html.dataset.theme = next;
+    themeBtn.textContent = next === "dark" ? "☀️" : "🌙";
+    localStorage.setItem("theme", next);
+  });
+
+  // ── Approach selector ──────────────────────────────────────
   let currentApproach = "orchestrator";
   document.querySelectorAll(".approach-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -310,7 +481,7 @@
     });
   });
 
-  // --- run ---
+  // ── Run ────────────────────────────────────────────────────
   const runBtn   = document.getElementById("run-btn");
   const spinner  = document.getElementById("spinner");
   const statusEl = document.getElementById("status-text");
@@ -343,7 +514,6 @@
       document.getElementById("result-body").innerHTML    = marked.parse(data.result);
       document.getElementById("result-card").style.display = "block";
       statusEl.textContent = "";
-
       loadUsage();
     } catch (e) {
       errEl.textContent = "Error: " + e.message;
@@ -355,39 +525,66 @@
     }
   });
 
-  // allow Ctrl+Enter to submit
   document.getElementById("task").addEventListener("keydown", e => {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) runBtn.click();
   });
 
-  // --- usage table ---
+  // ── Usage + stats board ────────────────────────────────────
+  function fmt(n) {
+    return n >= 1000 ? (n / 1000).toFixed(1) + "k" : String(n);
+  }
+
   async function loadUsage() {
     const res = await fetch("/usage").catch(() => null);
     if (!res || !res.ok) return;
     const rows = await res.json();
     if (!rows.length) return;
 
+    // ── stats board ──
+    const totalCost = rows.reduce((s, r) => s + r.cost_usd, 0);
+    const totalIn   = rows.reduce((s, r) => s + r.input + (r.cache_read || 0) + (r.cache_write || 0), 0);
+    const totalOut  = rows.reduce((s, r) => s + r.output, 0);
+
+    let haikuCalls = 0, sonnetCalls = 0;
+    rows.forEach(r => {
+      if (r.model.includes("haiku")) haikuCalls++;
+      else sonnetCalls++;
+    });
+    const total = rows.length;
+    const haikuPct  = total ? Math.round(haikuCalls  / total * 100) : 0;
+    const sonnetPct = total ? Math.round(sonnetCalls / total * 100) : 0;
+
+    document.getElementById("stat-cost").textContent       = "$" + totalCost.toFixed(4);
+    document.getElementById("stat-calls").textContent      = total + " API call" + (total !== 1 ? "s" : "");
+    document.getElementById("stat-in").textContent         = fmt(totalIn);
+    document.getElementById("stat-out").textContent        = fmt(totalOut);
+    document.getElementById("stat-haiku-pct").textContent  = haikuPct + "% Haiku";
+    document.getElementById("stat-model-label").textContent = sonnetPct + "% Sonnet";
+    document.getElementById("model-bar-fill").style.width  = haikuPct + "%";
+
+    // ── table (last 20, newest first) ──
     const tbody = document.getElementById("usage-tbody");
     tbody.innerHTML = "";
     [...rows].reverse().slice(0, 20).forEach(r => {
+      const agentShort = r.agent.replace("TeammateAgent[", "").replace("]", "");
       const agentTag = r.agent.includes("Orchestrator")
-        ? `<span class="tag orch">${r.agent}</span>`
-        : `<span class="tag work">${r.agent}</span>`;
+        ? `<span class="tag orch">Orchestrator</span>`
+        : `<span class="tag work">${agentShort}</span>`;
       const modelTag = r.model.includes("haiku")
         ? `<span class="tag haiku">haiku</span>`
         : `<span class="tag sonnet">sonnet</span>`;
       const time = r.ts ? r.ts.split("T")[1].slice(0, 8) : "—";
-      tbody.innerHTML += `
-        <tr>
-          <td style="color:var(--muted)">${time}</td>
-          <td>${agentTag}</td>
-          <td style="color:var(--muted)">${r.call}</td>
-          <td>${modelTag}</td>
-          <td style="text-align:right">${r.input}</td>
-          <td style="text-align:right">${r.output}</td>
-          <td style="text-align:right;color:var(--green)">$${r.cost_usd.toFixed(5)}</td>
-        </tr>`;
+      tbody.innerHTML += `<tr>
+        <td style="color:var(--muted)">${time}</td>
+        <td>${agentTag}</td>
+        <td style="color:var(--muted)">${r.call}</td>
+        <td>${modelTag}</td>
+        <td style="text-align:right">${r.input}</td>
+        <td style="text-align:right">${r.output}</td>
+        <td style="text-align:right;color:var(--green)">$${r.cost_usd.toFixed(5)}</td>
+      </tr>`;
     });
+
     document.getElementById("usage-section").style.display = "block";
   }
 
