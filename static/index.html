@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Agents</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0d1117;
+    --surface: #161b22;
+    --border:  #30363d;
+    --text:    #e6edf3;
+    --muted:   #8b949e;
+    --accent:  #58a6ff;
+    --green:   #3fb950;
+    --orange:  #d29922;
+    --purple:  #a371f7;
+    --red:     #f85149;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header span { color: var(--muted); font-size: 13px; }
+
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ---- approach selector ---- */
+  .approaches {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .approach-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s, background .15s;
+  }
+  .approach-btn:hover { border-color: var(--accent); }
+  .approach-btn.active {
+    border-color: var(--accent);
+    background: #1c2433;
+  }
+  .approach-btn .label { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .approach-btn .desc  { color: var(--muted); font-size: 12px; }
+
+  /* ---- task input ---- */
+  .input-group { display: flex; flex-direction: column; gap: 8px; }
+  label { font-size: 13px; color: var(--muted); }
+  textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    padding: 12px;
+    resize: vertical;
+    min-height: 80px;
+    width: 100%;
+    outline: none;
+    transition: border-color .15s;
+  }
+  textarea:focus { border-color: var(--accent); }
+
+  /* ---- run button ---- */
+  .run-row { display: flex; align-items: center; gap: 16px; }
+  button#run-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    color: #0d1117;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 28px;
+    transition: opacity .15s;
+  }
+  button#run-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- result card ---- */
+  #result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    display: none;
+  }
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-header .badge {
+    background: #1c2433;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    color: var(--accent);
+    font-size: 12px;
+    padding: 2px 8px;
+  }
+  .stats { display: flex; gap: 20px; font-size: 13px; color: var(--muted); }
+  .stats span b { color: var(--text); }
+  #result-body { line-height: 1.7; }
+
+  /* markdown output styles */
+  #result-body h1, #result-body h2, #result-body h3 {
+    margin: 16px 0 8px; color: var(--text);
+  }
+  #result-body p  { margin-bottom: 12px; }
+  #result-body ul, #result-body ol { margin: 8px 0 12px 20px; }
+  #result-body li { margin-bottom: 4px; }
+  #result-body code {
+    background: var(--bg);
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    padding: 2px 6px;
+  }
+  #result-body pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow-x: auto;
+    padding: 16px;
+    margin: 12px 0;
+  }
+  #result-body pre code { background: none; padding: 0; }
+  #result-body blockquote {
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+    margin: 12px 0;
+    padding: 4px 16px;
+  }
+  #result-body strong { color: var(--text); }
+
+  /* ---- usage table ---- */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: 10px;
+  }
+  .usage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .usage-table th {
+    color: var(--muted);
+    font-weight: 500;
+    padding: 6px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .usage-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #1c2228;
+  }
+  .usage-table tr:hover td { background: #161b22; }
+  .tag {
+    border-radius: 3px;
+    font-size: 11px;
+    padding: 1px 6px;
+  }
+  .tag.orch  { background: #1a2d4a; color: var(--accent); }
+  .tag.work  { background: #1a3025; color: var(--green); }
+  .tag.haiku { background: #2a1f3d; color: var(--purple); }
+  .tag.sonnet{ background: #1a2d4a; color: var(--accent); }
+
+  #error-msg {
+    background: #2d1117;
+    border: 1px solid var(--red);
+    border-radius: 8px;
+    color: var(--red);
+    display: none;
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2">
+    <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+  </svg>
+  <h1>Claude Agents</h1>
+  <span>multi-agent experiment</span>
+</header>
+
+<main>
+
+  <!-- Approach -->
+  <div>
+    <div class="section-title">Approach</div>
+    <div class="approaches">
+      <button class="approach-btn" data-value="single">
+        <div class="label">Single agent</div>
+        <div class="desc">Researcher answers directly. Fastest &amp; cheapest.</div>
+      </button>
+      <button class="approach-btn active" data-value="orchestrator">
+        <div class="label">Orchestrator</div>
+        <div class="desc">Plans, dispatches workers, synthesises. Structured output.</div>
+      </button>
+      <button class="approach-btn" data-value="async">
+        <div class="label">Async parallel</div>
+        <div class="desc">Same as orchestrator but workers run concurrently.</div>
+      </button>
+      <button class="approach-btn" data-value="pipeline">
+        <div class="label">Pipeline</div>
+        <div class="desc">Researcher → Writer sequential refinement chain.</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Task input -->
+  <div class="input-group">
+    <label for="task">Task</label>
+    <textarea id="task" placeholder="Ask anything — e.g. 'Explain Python's GIL and its impact on threading'" rows="3"></textarea>
+  </div>
+
+  <!-- Run -->
+  <div class="run-row">
+    <button id="run-btn">Run</button>
+    <div class="spinner" id="spinner"></div>
+    <span id="status-text" style="color: var(--muted); font-size: 13px;"></span>
+  </div>
+
+  <div id="error-msg"></div>
+
+  <!-- Result -->
+  <div id="result-card">
+    <div class="result-header">
+      <span class="badge" id="result-badge">orchestrator</span>
+      <div class="stats">
+        <span><b id="stat-time">—</b> s</span>
+      </div>
+    </div>
+    <div id="result-body"></div>
+  </div>
+
+  <!-- Recent usage -->
+  <div id="usage-section" style="display:none">
+    <div class="section-title">Recent API calls</div>
+    <table class="usage-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Agent</th>
+          <th>Call</th>
+          <th>Model</th>
+          <th>In</th>
+          <th>Out</th>
+          <th>Cost</th>
+        </tr>
+      </thead>
+      <tbody id="usage-tbody"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<script>
+  // --- approach selector ---
+  let currentApproach = "orchestrator";
+  document.querySelectorAll(".approach-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".approach-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentApproach = btn.dataset.value;
+    });
+  });
+
+  // --- run ---
+  const runBtn   = document.getElementById("run-btn");
+  const spinner  = document.getElementById("spinner");
+  const statusEl = document.getElementById("status-text");
+  const errEl    = document.getElementById("error-msg");
+
+  runBtn.addEventListener("click", async () => {
+    const task = document.getElementById("task").value.trim();
+    if (!task) { statusEl.textContent = "Enter a task first."; return; }
+
+    runBtn.disabled = true;
+    spinner.style.display = "block";
+    statusEl.textContent = "Running…";
+    errEl.style.display = "none";
+    document.getElementById("result-card").style.display = "none";
+
+    try {
+      const res = await fetch("/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task, approach: currentApproach }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(err.detail || res.statusText);
+      }
+      const data = await res.json();
+
+      document.getElementById("result-badge").textContent = data.approach;
+      document.getElementById("stat-time").textContent    = data.elapsed.toFixed(2);
+      document.getElementById("result-body").innerHTML    = marked.parse(data.result);
+      document.getElementById("result-card").style.display = "block";
+      statusEl.textContent = "";
+
+      loadUsage();
+    } catch (e) {
+      errEl.textContent = "Error: " + e.message;
+      errEl.style.display = "block";
+      statusEl.textContent = "";
+    } finally {
+      runBtn.disabled = false;
+      spinner.style.display = "none";
+    }
+  });
+
+  // allow Ctrl+Enter to submit
+  document.getElementById("task").addEventListener("keydown", e => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) runBtn.click();
+  });
+
+  // --- usage table ---
+  async function loadUsage() {
+    const res = await fetch("/usage").catch(() => null);
+    if (!res || !res.ok) return;
+    const rows = await res.json();
+    if (!rows.length) return;
+
+    const tbody = document.getElementById("usage-tbody");
+    tbody.innerHTML = "";
+    [...rows].reverse().slice(0, 20).forEach(r => {
+      const agentTag = r.agent.includes("Orchestrator")
+        ? `<span class="tag orch">${r.agent}</span>`
+        : `<span class="tag work">${r.agent}</span>`;
+      const modelTag = r.model.includes("haiku")
+        ? `<span class="tag haiku">haiku</span>`
+        : `<span class="tag sonnet">sonnet</span>`;
+      const time = r.ts ? r.ts.split("T")[1].slice(0, 8) : "—";
+      tbody.innerHTML += `
+        <tr>
+          <td style="color:var(--muted)">${time}</td>
+          <td>${agentTag}</td>
+          <td style="color:var(--muted)">${r.call}</td>
+          <td>${modelTag}</td>
+          <td style="text-align:right">${r.input}</td>
+          <td style="text-align:right">${r.output}</td>
+          <td style="text-align:right;color:var(--green)">$${r.cost_usd.toFixed(5)}</td>
+        </tr>`;
+    });
+    document.getElementById("usage-section").style.display = "block";
+  }
+
+  loadUsage();
+</script>
+</body>
+</html>
