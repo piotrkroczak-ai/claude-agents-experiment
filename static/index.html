@@ -148,6 +148,74 @@
     line-height: 1.4;
   }
 
+  /* ── Info icon + tooltip ──────────────────────────────────── */
+  .info-icon {
+    align-items: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--muted);
+    cursor: help;
+    display: flex;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 800;
+    height: 17px;
+    justify-content: center;
+    line-height: 1;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    transition: color .15s, border-color .15s;
+    width: 17px;
+    z-index: 1;
+  }
+  .info-icon:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tooltip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.25);
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.55;
+    opacity: 0;
+    padding: 11px 13px;
+    pointer-events: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    transition: opacity .15s, transform .15s;
+    transform: translateY(-4px);
+    width: 240px;
+    z-index: 200;
+  }
+  .tooltip strong { color: var(--accent); display: block; margin-bottom: 5px; }
+  .tooltip .tip-meta {
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+
+  /* Left-align tooltip on cards 1–2, right-align on cards 3–4 */
+  .approaches .approach-btn:nth-child(1) .tooltip,
+  .approaches .approach-btn:nth-child(2) .tooltip { left: 0; }
+  .approaches .approach-btn:nth-child(3) .tooltip,
+  .approaches .approach-btn:nth-child(4) .tooltip { right: 0; }
+
+  /* Lift card above siblings so tooltip isn't clipped */
+  .approach-btn:has(.info-icon:hover) { z-index: 10; }
+
+  .info-icon:hover .tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* ── Task input ───────────────────────────────────────────── */
   .input-group { display: flex; flex-direction: column; gap: 8px; }
   label { font-size: 13px; color: var(--muted); }
@@ -361,21 +429,56 @@
     <div class="section-title">Approach</div>
     <div class="approaches">
       <button class="approach-btn" data-value="single">
+        <span class="info-icon">i
+          <div class="tooltip">
+            <strong>Single agent</strong>
+            One API call. The researcher specialist receives your task and answers directly in 2–3 sentences. No planning, no synthesis step.
+            <div class="tip-meta">~1 call &nbsp;·&nbsp; 2–4 s &nbsp;·&nbsp; Haiku only</div>
+          </div>
+        </span>
         <span class="icon">⚡</span>
         <span class="label">Single agent</span>
         <span class="desc">Researcher answers directly. Fastest &amp; cheapest.</span>
       </button>
       <button class="approach-btn active" data-value="orchestrator">
+        <span class="info-icon">i
+          <div class="tooltip">
+            <strong>Orchestrator</strong>
+            3 steps via Sonnet + Haiku:<br>
+            1. <em>Plan</em> — Sonnet decides which workers to call and with what brief.<br>
+            2. <em>Dispatch</em> — researcher + writer answer in sequence.<br>
+            3. <em>Synthesise</em> — Sonnet merges outputs into a final answer.
+            <div class="tip-meta">~4 calls &nbsp;·&nbsp; 12–20 s &nbsp;·&nbsp; Sonnet + Haiku</div>
+          </div>
+        </span>
         <span class="icon">🎯</span>
         <span class="label">Orchestrator</span>
         <span class="desc">Plans subtasks, dispatches workers, synthesises results.</span>
       </button>
       <button class="approach-btn" data-value="async">
+        <span class="info-icon">i
+          <div class="tooltip">
+            <strong>Async parallel</strong>
+            Same 3 steps as Orchestrator, but workers are dispatched simultaneously via <code>asyncio.gather()</code> — their latency overlaps instead of stacking.<br><br>
+            Plan → [researcher ∥ writer] → Synthesise
+            <div class="tip-meta">~3 calls &nbsp;·&nbsp; 10–16 s &nbsp;·&nbsp; Sonnet + Haiku</div>
+          </div>
+        </span>
         <span class="icon">⚙️</span>
         <span class="label">Async parallel</span>
         <span class="desc">Workers run concurrently via asyncio — lower latency.</span>
       </button>
       <button class="approach-btn" data-value="pipeline">
+        <span class="info-icon">i
+          <div class="tooltip">
+            <strong>Pipeline</strong>
+            2 calls, no planner, no synthesis:<br>
+            1. Researcher answers the task.<br>
+            2. Writer receives that output as context and refines it.<br><br>
+            Cheaper than the orchestrator — no Sonnet calls.
+            <div class="tip-meta">~2 calls &nbsp;·&nbsp; 5–10 s &nbsp;·&nbsp; Haiku only</div>
+          </div>
+        </span>
         <span class="icon">🔗</span>
         <span class="label">Pipeline</span>
         <span class="desc">Researcher → Writer sequential refinement chain.</span>
@@ -479,6 +582,10 @@
       btn.classList.add("active");
       currentApproach = btn.dataset.value;
     });
+  });
+  // Prevent clicking the info icon from switching the approach
+  document.querySelectorAll(".info-icon").forEach(el => {
+    el.addEventListener("click", e => e.stopPropagation());
   });
 
   // ── Run ────────────────────────────────────────────────────
